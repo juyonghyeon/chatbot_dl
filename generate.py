@@ -14,14 +14,14 @@ base_path = os.path.dirname(os.path.realpath(__file__))
 if len(sys.argv) < 2:
     sys.exit(1)
 
-#model.load_weights(f"{basePath}/chatbot.weights.h5")
+model.load_weights(f"{base_path}/chatbot.weights.h5")
 
 def chatbot(user_text):
     input_ids = tokenizer.encode(f"<s><usr>{user_text}<sys>")
     input_ids = tf.convert_to_tensor([input_ids])
     outputs = model.generate(input_ids, max_length=100, do_sample=True, top_k=100, top_p=0.9)
     sentence = tokenizer.decode(outputs[0].numpy().tolist())
-    return sentence.split('<sys>')[1]
+    return sentence.split('<sys>')[1].replace('<pad>', '').replace('<unk>', '').replace("</s>", "")
 
 
 message = sys.argv[1]
